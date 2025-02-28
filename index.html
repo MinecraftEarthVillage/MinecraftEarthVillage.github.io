@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>你是有多无聊，才会把游戏地址当成网址输入 -地球村 Minecraft 服务器</title>
+    <style>
+        :root {
+            --mc-green: #4CAF50;
+            --mc-dark: #2D2D2D;
+            --mc-brown: #8B4513;
+        }
+
+        body {
+            font-family: 'Microsoft Yahei', sans-serif;
+            background-color: var(--mc-dark);
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 30px;
+            border-radius: 10px;
+            border: 3px solid var(--mc-green);
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
+        }
+
+        h1 {
+            color: var(--mc-green);
+            text-align: center;
+            font-size: 2.5em;
+            text-shadow: 2px 2px #000;
+            margin-bottom: 30px;
+        }
+
+        .notice {
+            background: #1a1a1a;
+            padding: 20px;
+            border-left: 5px solid var(--mc-brown);
+            margin: 20px 0;
+        }
+
+        .server-address {
+            text-align: center;
+            font-size: 1.8em;
+            background: #333;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 25px 0;
+            font-family: monospace;
+        }
+
+        .links {
+            display: grid;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .link-card {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+            transition: transform 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .link-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--mc-green);
+        }
+
+        a {
+            color: var(--mc-green);
+            text-decoration: none;
+            display: block;
+        }
+
+        .link-title {
+            font-size: 1.2em;
+            margin-bottom: 8px;
+        }
+
+        .link-desc {
+            color: #aaa;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .server-address {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏡 地球村 Minecraft 服务器 🌏</h1>
+        
+        <div class="notice">
+            ⚠️ 请注意：这是 Minecraft 多人游戏服务器地址，本来不是拿来做网页的！<br>
+            请复制这个地址到 Minecraft 游戏的多人游戏界面添加服务器
+        </div>
+
+        <div class="server-address">
+            earthvillage.top
+        </div>
+
+        <div class="links">
+            <div class="link-card">
+                <a href="https://wiki.earthvillage.top" target="_blank">
+                    <div class="link-title">📚 新人指南 Wiki</div>
+                    <div class="link-desc">服务器玩法指南、规则说明和新人教程</div>
+                </a>
+            </div>
+
+            <div class="link-card">
+                <a href="https://map.earthvillage.top" target="_blank">
+                    <div class="link-title">🗺️ 实时地图 & 聊天室</div>
+                    <div class="link-desc">在线查看服务器地图，网页版聊天功能</div>
+                </a>
+            </div>
+
+            <div class="link-card">
+                <a href="https://emc.mysxl.cn" target="_blank">
+                    <div class="link-title">🌟 服务器宣传站</div>
+                    <div class="link-desc">了解服务器特色内容和最新动态</div>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
