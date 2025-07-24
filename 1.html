@@ -197,4 +197,94 @@
 </head>
 <body>
     <div class="container">
-        <div class="
+        <div class="timer-card">
+            <h1>打点计时器</h1>
+            <div class="counter-display" id="counter">0</div>
+            
+            <div class="controls">
+                <button id="increment-btn" class="btn increment-btn">
+                    <span class="fa-icon">+</span> 增加
+                </button>
+                <button id="lock-btn" class="btn lock-btn">
+                    <span class="fa-icon">🔒</span> 锁定
+                </button>
+                <button id="reset-btn" class="btn reset-btn">
+                    <span class="fa-icon">🔄</span> 重置
+                </button>
+            </div>
+            
+            <div id="status-indicator" class="status-indicator">
+                <span class="fa-icon">✅</span> 状态: 解锁中
+            </div>
+            
+            <div class="instruction">
+                <p>使用说明: 点击"+"按钮增加计数 | 点击"锁定"可锁定计时器 | 重置归零</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const counterDisplay = document.getElementById('counter');
+        const incrementBtn = document.getElementById('increment-btn');
+        const lockBtn = document.getElementById('lock-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const statusIndicator = document.getElementById('status-indicator');
+        
+        // 初始化变量
+        let count = 0;
+        let isLocked = false;
+        
+        // 更新计数器显示
+        function updateCounter() {
+            counterDisplay.textContent = count;
+            counterDisplay.classList.add('plus-animation');
+            setTimeout(() => {
+                counterDisplay.classList.remove('plus-animation');
+            }, 500);
+        }
+        
+        // 更新锁定状态显示
+        function updateLockStatus() {
+            if (isLocked) {
+                lockBtn.classList.add('locked');
+                lockBtn.innerHTML = '<span class="fa-icon">🔓</span> 解锁';
+                incrementBtn.disabled = true;
+                statusIndicator.textContent = '状态: 已锁定';
+                statusIndicator.classList.add('locked-status');
+            } else {
+                lockBtn.classList.remove('locked');
+                lockBtn.innerHTML = '<span class="fa-icon">🔒</span> 锁定';
+                incrementBtn.disabled = false;
+                statusIndicator.textContent = '状态: 解锁中';
+                statusIndicator.classList.remove('locked-status');
+            }
+        }
+        
+        // 增加按钮点击事件
+        incrementBtn.addEventListener('click', function() {
+            if (!isLocked) {
+                count++;
+                updateCounter();
+            }
+        });
+        
+        // 锁定按钮点击事件
+        lockBtn.addEventListener('click', function() {
+            isLocked = !isLocked;
+            updateLockStatus();
+        });
+        
+        // 重置按钮点击事件
+        resetBtn.addEventListener('click', function() {
+            count = 0;
+            isLocked = false;
+            updateCounter();
+            updateLockStatus();
+        });
+        
+        // 初始化显示
+        updateLockStatus();
+    </script>
+</body>
+</html>
