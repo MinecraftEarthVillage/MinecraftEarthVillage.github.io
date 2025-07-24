@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>打点计时器</title>
+    <title>打点计时器(带安全重置)</title>
     <style>
         * {
             box-sizing: border-box;
@@ -92,7 +92,7 @@
             gap: 10px;
         }
         
-        .btn:active {
+        .btn:active:not(:disabled) {
             transform: translateY(3px);
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
@@ -103,15 +103,13 @@
             width: 150px;
         }
         
-        .increment-btn:hover {
+        .increment-btn:hover:not(:disabled) {
             background: #38a169;
         }
         
         .increment-btn:disabled {
             background: #cbd5e0;
             cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
         }
         
         .lock-btn {
@@ -120,7 +118,7 @@
             width: 150px;
         }
         
-        .lock-btn:hover {
+        .lock-btn:hover:not(:disabled) {
             background: #3182ce;
         }
         
@@ -134,8 +132,14 @@
             width: 150px;
         }
         
-        .reset-btn:hover {
+        .reset-btn:hover:not(:disabled) {
             background: #dd6b20;
+        }
+        
+        .reset-btn:disabled {
+            background: #e2e8f0;
+            color: #a0aec0;
+            cursor: not-allowed;
         }
         
         .fa-icon {
@@ -175,6 +179,78 @@
             100% { transform: scale(1); }
         }
         
+        #modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        #modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 90%;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .modal-btn {
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+        }
+        
+        .confirm-btn {
+            background: #e53e3e;
+            color: white;
+        }
+        
+        .confirm-btn:hover {
+            background: #c53030;
+        }
+        
+        .cancel-btn {
+            background: #a0aec0;
+            color: white;
+        }
+        
+        .cancel-btn:hover {
+            background: #718096;
+        }
+        
         @media (max-width: 600px) {
             .timer-card {
                 padding: 30px 20px;
@@ -191,6 +267,7 @@
             .btn {
                 padding: 12px 25px;
                 font-size: 1rem;
+                width: 130px;
             }
         }
     </style>
@@ -198,7 +275,7 @@
 <body>
     <div class="container">
         <div class="timer-card">
-            <h1>打点计时器</h1>
+            <h1>打点计时器(带安全重置)</h1>
             <div class="counter-display" id="counter">0</div>
             
             <div class="controls">
@@ -208,7 +285,7 @@
                 <button id="lock-btn" class="btn lock-btn">
                     <span class="fa-icon">🔒</span> 锁定
                 </button>
-                <button id="reset-btn" class="btn reset-btn">
+                <button id="reset-btn" class="btn reset-btn" disabled>
                     <span class="fa-icon">🔄</span> 重置
                 </button>
             </div>
@@ -218,7 +295,18 @@
             </div>
             
             <div class="instruction">
-                <p>使用说明: 点击"+"按钮增加计数 | 点击"锁定"可锁定计时器 | 重置归零</p>
+                <p>安全操作流程: 先锁定 → 然后重置</p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="modal">
+        <div class="modal-content">
+            <div class="modal-title">确认重置</div>
+            <p>确定要将计数重置为0吗？此操作不可撤销。</p>
+            <div class="modal-buttons">
+                <button id="cancel-btn" class="modal-btn cancel-btn">取消</button>
+                <button id="confirm-btn" class="modal-btn confirm-btn">确认重置</button>
             </div>
         </div>
     </div>
@@ -230,6 +318,9 @@
         const lockBtn = document.getElementById('lock-btn');
         const resetBtn = document.getElementById('reset-btn');
         const statusIndicator = document.getElementById('status-indicator');
+        const modal = document.getElementById('modal');
+        const confirmBtn = document.getElementById('confirm-btn');
+        const cancelBtn = document.getElementById('cancel-btn');
         
         // 初始化变量
         let count = 0;
@@ -250,12 +341,14 @@
                 lockBtn.classList.add('locked');
                 lockBtn.innerHTML = '<span class="fa-icon">🔓</span> 解锁';
                 incrementBtn.disabled = true;
+                resetBtn.disabled = false; // 解锁状态下重置按钮可用
                 statusIndicator.textContent = '状态: 已锁定';
                 statusIndicator.classList.add('locked-status');
             } else {
                 lockBtn.classList.remove('locked');
                 lockBtn.innerHTML = '<span class="fa-icon">🔒</span> 锁定';
                 incrementBtn.disabled = false;
+                resetBtn.disabled = true; // 解锁状态下重置按钮禁用
                 statusIndicator.textContent = '状态: 解锁中';
                 statusIndicator.classList.remove('locked-status');
             }
@@ -275,12 +368,32 @@
             updateLockStatus();
         });
         
-        // 重置按钮点击事件
+        // 重置按钮点击事件 - 显示确认弹窗
         resetBtn.addEventListener('click', function() {
+            if (isLocked) {
+                modal.classList.add('active');
+            }
+        });
+        
+        // 确认重置按钮事件
+        confirmBtn.addEventListener('click', function() {
             count = 0;
             isLocked = false;
             updateCounter();
             updateLockStatus();
+            modal.classList.remove('active');
+        });
+        
+        // 取消重置按钮事件
+        cancelBtn.addEventListener('click', function() {
+            modal.classList.remove('active');
+        });
+        
+        // 点击模态框背景关闭弹窗
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+            }
         });
         
         // 初始化显示
