@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>快连破壁者 - 打破国界的高墙</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4cc9f0;
+            --dark: #2b2d42;
+            --light: #f8f9fa;
+            --success: #4ade80;
+            --warning: #facc15;
+            --danger: #f87171;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: #f1f5f9;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 声明样式 */
+        .disclaimer-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            transition: all 0.5s ease;
+        }
+        
+        .disclaimer-content {
+            background: rgba(30, 41, 59, 0.95);
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--accent);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .disclaimer-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .disclaimer-header h2 {
+            font-size: 28px;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+        
+        .disclaimer-text {
+            padding: 20px;
+            height: 55vh;
+            overflow-y: auto;
+            background: rgba(15, 23, 42, 0.7);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            scroll-behavior: smooth;
+        }
+        
+        .disclaimer-text h3 {
+            color: var(--accent);
+            margin: 20px 0 10px;
+        }
+        
+        .disclaimer-text p {
+            margin-bottom: 15px;
+        }
+        
+        .disclaimer-footer {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+        
+        .disclaimer-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 12px 35px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            border: none;
+            min-width: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-accept {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            position: relative;
+        }
+        
+        .btn-accept:disabled {
+            background: linear-gradient(to right, #64748b, #475569);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .btn-accept:disabled:after {
+            content: attr(data-count);
+            position: absolute;
+            right: -15px;
+            top: -15px;
+            background: var(--warning);
+            color: #000;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .btn-reject {
+            background: linear-gradient(to right, var(--dark), #1e293b);
+            color: white;
+            border: 1px solid var(--danger);
+        }
+        
+        .scroll-notice {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--warning);
+            color: #000;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 14px;
+            animation: pulse 2s infinite;
+            display: none;
+        }
+        
+        /* 主内容区 */
+        .main-content {
+            display: none;
+            padding-top: 50px;
+            padding-bottom: 100px;
+            animation: fadeIn 1s ease;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .header h1 {
+            font-size: 3.5rem;
+            background: linear-gradient(120deg, var(--accent), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            text-shadow: 0 5px 15px rgba(76, 201, 240, 0.2);
+        }
+        
+        .header p {
+            font-size: 1.5rem;
+            max-width: 800px;
+            margin: 0 auto;
+            color: #cbd5e1;
+        }
+        
+        /* 功能亮点 */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        
+        .feature {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+        
+        .feature:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .feature-icon {
+            font-size: 40px;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+        
+        .feature h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: var(--accent);
+        }
+        
+        .feature p {
+            color: #e2e8f0;
+            font-size: 1.1rem;
+        }
+        
+        /* 下载区域 */
+        .downloads {
+            background: rgba(15, 23, 42, 0.7);
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 60px;
+            border: 1px solid rgba(76, 201, 240, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .downloads h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            color: var(--accent);
+        }
+        
+        .platforms {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        
+        .platform {
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .platform:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent);
+        }
+        
+        .platform i {
+            font-size: 50px;
+            margin-bottom: 15px;
+            color: var(--accent);
+        }
+        
+        .platform h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: white;
+        }
+        
+        .platform a {
+            display: inline-block;
+            padding: 12px 30px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            border: 2px solid transparent;
+        }
+        
+        .platform a:hover {
+            background: transparent;
+            border-color: var(--accent);
+        }
+        
+        /* 福利区域 */
+        .bonus {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(67, 97, 238, 0.3);
+        }
+        
+        .bonus h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .bonus p {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .bonus-id {
+            background: rgba(255, 255, 255, 0.15);
+            display: inline-block;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin: 30px 0;
+            border: 2px dashed white;
+        }
+        
+        /* 动画 */
+        @keyframes pulse {
+            0% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.05); }
+            100% { transform: translateX(-50%) scale(1); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .header p {
+                font-size: 1.2rem;
+            }
+            
+            .disclaimer-content {
+                padding: 20px;
+            }
+            
+            .disclaimer-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .platforms {
+                grid-template-columns: 1fr;
+            }
+            
+            .bonus p {
+                font-size: 1.2rem;
+            }
+            
+            .bonus-id {
+                font-size: 1.4rem;
+                padding: 12px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 声明弹窗 -->
+    <div class="disclaimer-modal" id="disclaimerModal">
+        <div class="disclaimer-content">
+            <div class="disclaimer-header">
+                <h2>使用前重要声明</h2>
+                <p>请仔细阅读以下声明内容</p>
+            </div>
+            
+            <div class="disclaimer-text" id="disclaimerText">
+                <h3>合规声明</h3>
+                <p>根据中华人民共和国工业和信息化部相关规定，本VPN工具仅供依法访问境外教育、学术及正常文化交流之用途，用户必须严格遵守《中华人民共和国网络安全法》及其他相关法律法规。</p>
+                
+                <h3>使用限制</h3>
+                <p>用户不得将本服务用于任何违法违规活动，包括但不限于：</p>
+                <p>• 访问被我国法律法规禁止的网站及内容</p>
+                <p>• 从事网络攻击、侵入他人网络等非法行为</p>
+                <p>• 传播违法信息或从事危害国家安全的活动</p>
+                <p>• 侵犯他人知识产权、隐私权及其他合法权益</p>
+                
+                <h3>责任条款</h3>
+                <p>用户使用本软件即表示承诺：</p>
+                <p>1. 保证仅用于合法的跨境网络访问需求</p>
+                <p>2. 遵守目标国家/地区的网络使用规定</p>
+                <p>3. 不将本工具用于任何商业代理行为</p>
+                <p>4. 不从事任何危害网络安全的行为</p>
+                
+                <h3>免责声明</h3>
+                <p>本软件开发者不对用户行为承担任何责任，任何因用户违反相关法律法规而产生的后果由用户自行承担。开发者保留在必要时终止违规用户服务的权利。</p>
+                
+                <h3>用户承诺（请在安静的地方宣誓）（？）</h3>
+                <p>1.本人已充分了解中华人民共和国相关互联网管理法律法规，承诺仅将本软件用于合法目的，维护国家网络主权和安全，不从事任何危害网络安全的行为。</p>
+                <p>2.我严格遵守中国国家法律法规与相应政策要求，坚决维护国家主权与领土的完整。</p>
+                <p>
+我完全支持社会主义， 支持中国共产党的领导，本人忠于中华人民共和国宪法，维护宪法权威，履行法定职责， 忠于祖国、忠于人民，恪尽职守、廉洁奉公，接受人民监督，为建设富强民主文明和谐美丽的社会主义现代化强国而努力奋斗。坚决反对历史虚无主义，拥护中国特色社会主义，坚持社会主义核心价值观， 尊重先驱伟人，向先烈致敬！《中华人民共和国宪法》第三十五条：中华人民共和国公民有言论、出版、集会、结社、游行、示威的自由。 言论自由的保护不仅适用于反映多数意见或政府立场的宽论， 更重要的是保护不代表主流而且经常是不受欢迎的思想的表达。本人拥护党和国家的方针政策，坚决反对一切分裂国家行为，自觉遵守并严格落实《网络信息内容生态治理规定》，以营造清朗的网络空间、建设良好的网络生态为目标，以培育和践行社会主义核心价值观为根本，作为新时代创作者为加强和创新互联网内容建设而努力。 反对法西斯主义、帝国主义、霸权主义，弘扬社会主义精神。
+                </p>
+
+                <h3>隐私保护</h3>
+                <p>本软件不会收集用户的个人身份信息及网络活动记录。所有连接数据均为加密传输，且不会存储用户的浏览历史或网络使用日志。</p>
+                
+                <h3>安全须知</h3>
+                <p>• 请勿分享您的账户信息</p>
+                <p>• 及时更新软件至最新版本</p>
+                <p>• 在不需要VPN时断开连接</p>
+                <p>• 避免用于敏感数据传输</p>
+                
+                <h3>监督权利</h3>
+                <p>用户理解并同意，主管部门有权依法对网络活动进行监管。如发现用户存在违规行为，开发者将积极配合相关部门提供必要的技术协助。</p>
+                
+                <h3>最终说明</h3>
+                <p>继续使用本软件即表示您已充分阅读、理解并同意以上所有条款。开发者保留对本声明内容的最终解释权及修改权。</p>
+                
+                <p style="text-align: center; margin-top: 40px; font-weight: bold;">请将滚动条拉至底部阅读完整内容后进行操作</p>
+            </div>
+            
+            <div class="disclaimer-footer">
+                <div class="scroll-notice" id="scrollNotice">请滚动至底部阅读全部内容</div>
+                <div class="disclaimer-buttons">
+                    <button class="btn btn-accept" id="agreeBtn" disabled data-count="10">同意条款</button>
+                    <button class="btn btn-reject" id="disagreeBtn">拒绝并离开</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 主内容（默认隐藏） -->
+    <div class="main-content" id="mainContent">
+        <div class="container">
+            <header class="header">
+                <h1>快连破壁者 - 打破国界的高墙</h1>
+                <p>玩现代战舰卡卡顿顿？下载Minecraft模组死活进不去？用这个破壁者试试吧！</p>
+            </header>
+            
+            <section class="features">
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-globe-asia"></i>
+                    </div>
+                    <h3>稳定运行超过2000天</h3>
+                    <p>从2019年至今，我们提供持续稳定的全球网络连接服务，99.99%的在线保障，让您无忧畅游全球网络。</p>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <h3>无需任何信息即可注册</h3>
+                    <p>我们重视用户隐私，无需手机号、邮箱等个人信息，30秒完成注册，立即开启全球网络访问体验。</p>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>无需配置，3秒内连接</h3>
+                    <p>极致简化操作流程，一次点击自动选择最优线路，三秒内连接成功，享受真正的无缝连接体验。</p>
+                </div>
+                
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>助力3000万+用户</h3>
+                    <p>我们已服务全球超过3000万用户，赢得97%的用户满意度，是广大网络游戏玩家的优先选择。</p>
+                </div>
+            </section>
+            
+            <section class="downloads">
+                <h2>全平台下载</h2>
+                <div class="platforms">
+                    <div class="platform">
+                        <i class="fab fa-apple"></i>
+                        <h3>iOS 内陆用户</h3>
+                        <p>中国大陆应用商店专版</p>
+                        <a href="https://appshare.onelink.me/7uiT/1c9f9287">下载教程</a>
+                    </div>
+                    
+                    <div class="platform">
+                        <i class="fab fa-apple"></i>
+                        <h3>iOS 海外版</h3>
+                        <p>全球应用商店版本</p>
+                        <a href="https://appshare.onelink.me/7uiT/33e7470c">App Store下载</a>
+                    </div>
+                    
+                    <div class="platform">
+                        <i class="fab fa-android"></i>
+                        <h3>Android 版本</h3>
+                        <p>兼容安卓6.0及以上版本</p>
+                        <a href="https://appshare.onelink.me/7uiT/fa80bb40">下载APK</a>
+                    </div>
+                    
+                    <div class="platform">
+                        <i class="fab fa-windows"></i>
+                        <h3>Windows 版本</h3>
+                        <p>支持Win7/8/10/11系统</p>
+                        <a href="https://appshare.onelink.me/7uiT/cd934bda">下载EXE</a>
+                    </div>
+                    
+                    <div class="platform">
+                        <i class="fab fa-apple"></i>
+                        <h3>macOS 版本</h3>
+                        <p>支持M系列芯片及Intel芯片</p>
+                        <a href="https://appshare.onelink.me/7uiT/1ed3d477">下载DMG</a>
+                    </div>
+                    
+                    <div class="platform">
+                        <i class="fas fa-link"></i>
+                        <h3>官方网站</h3>
+                        <p>访问完整官方网站</p>
+                        <a href="https://github.com/LetsgoNetwork/LetsGo_2/">前往官网</a>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="bonus">
+                <h2>免费福利</h2>
+                <p>🎁 下载快连破壁者，免费领试用会员！</p>
+                <p>🎁 填写朋友 ID，还能额外领福利！</p>
+                
+                <div class="bonus-id">
+                    我的 ID: 290280267
+                </div>
+                
+                <p>安装后打开填写我的ID，你能多得3天会员！</p>
+            </section>
+        </div>
+    </div>
+    
+    <!-- 404 页面 -->
+    <div id="notFoundPage" style="display: none;">
+        <!-- 404页面内容 -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const disclaimerModal = document.getElementById('disclaimerModal');
+            const disclaimerText = document.getElementById('disclaimerText');
+            const agreeBtn = document.getElementById('agreeBtn');
+            const disagreeBtn = document.getElementById('disagreeBtn');
+            const scrollNotice = document.getElementById('scrollNotice');
+            const mainContent = document.getElementById('mainContent');
+            let countdown = 10;
+            let countdownInterval;
+            
+            // 5秒后如果用户未滚动，显示提示
+            setTimeout(() => {
+                const isScrolledToBottom = 
+                    disclaimerText.scrollHeight - disclaimerText.scrollTop <= disclaimerText.clientHeight + 10;
+                
+                if (!isScrolledToBottom) {
+                    scrollNotice.style.display = 'block';
+                }
+            }, 5000);
+            
+            // 监听滚动事件
+            disclaimerText.addEventListener('scroll', function() {
+                const isScrolledToBottom = 
+                    this.scrollHeight - this.scrollTop <= this.clientHeight + 10;
+                
+                if (isScrolledToBottom) {
+                    scrollNotice.style.display = 'none';
+                    document.querySelector('.disclaimer-buttons').style.display = 'flex';
+                    
+                    // 开始倒计时
+                    if (!countdownInterval) {
+                        startCountdown();
+                    }
+                }
+            });
+            
+            // 开始倒计时函数
+            function startCountdown() {
+                agreeBtn.setAttribute('data-count', countdown);
+                
+                countdownInterval = setInterval(() => {
+                    countdown--;
+                    agreeBtn.setAttribute('data-count', countdown);
+                    
+                    if (countdown <= 0) {
+                        clearInterval(countdownInterval);
+                        agreeBtn.disabled = false;
+                        agreeBtn.innerHTML = '同意条款';
+                    }
+                }, 1000);
+            }
+            
+            // 同意按钮处理
+            agreeBtn.addEventListener('click', function() {
+                disclaimerModal.style.display = 'none';
+                mainContent.style.display = 'block';
+            });
+            
+            // 拒绝按钮处理
+            disagreeBtn.addEventListener('click', function() {
+                // 创建404页面内容
+                const notFoundPage = document.getElementById('notFoundPage');
+                notFoundPage.style.display = 'block';
+                notFoundPage.style.height = '100vh';
+                notFoundPage.style.display = 'flex';
+                notFoundPage.style.alignItems = 'center';
+                notFoundPage.style.justifyContent = 'center';
+                notFoundPage.style.flexDirection = 'column';
+                notFoundPage.style.background = 'linear-gradient(135deg, #1e293b, #0f172a)';
+                notFoundPage.innerHTML = `
+                    <h1 style="font-size: 5rem; color: #f87171;">矮油~</h1>
+                    <p style="font-size: 1.5rem; margin-bottom: 30px;">你拒绝了</p>
+                    <p>由于您已拒绝服务条款，即将跳转到首页</p>
+                `;
+                
+                // 隐藏其他内容
+                disclaimerModal.style.display = 'none';
+                mainContent.style.display = 'none';
+                
+                // 3秒后重定向到主页（或其他页面）
+                setTimeout(() => {
+                    window.location.href = 'http://map.earthvillage.top'; // 跳转到的主页
+                }, 3000);
+            });
+        });
+    </script>
+</body>
+</html>
