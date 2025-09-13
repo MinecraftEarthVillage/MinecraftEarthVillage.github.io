@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wplace Image Palette Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 600px; /* Optional: limit the container width */
+        }
+        h2 {
+            color: #333;
+        }
+        #fileInput {
+            display: none;
+        }
+        #uploadButton {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        #uploadButton:hover {
+            background-color: #0056b3;
+        }
+        .settings {
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .settings label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            text-align: left;
+        }
+        .settings input, .settings select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        #previewCanvas {
+            border: 1px solid #ccc;
+            max-width: 100%;
+            height: auto;
+            /* This property is crucial for a crisp pixelated look */
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Wplace Image Palette Converter</h2>
+        <input type="file" id="fileInput" accept="image/*">
+        <button id="uploadButton">Choose Image</button>
+        <div class="settings">
+            <div>
+                <label for="maxWidth">Max Width (pixels):</label>
+                <input type="number" id="maxWidth" value="50">
+            </div>
+            <div>
+                <label for="maxHeight">Max Height (pixels):</label>
+                <input type="number" id="maxHeight" value="50">
+            </div>
+            <div style="grid-column: 1 / -1;">
+                <label for="colorMode">Color Mode:</label>
+                <select id="colorMode">
+                    <option value="palette">Limited Palette</option>
+                    <option value="full">Full Colors</option>
+                    <option value="grayscale">Grayscale</option>
+                </select>
+            </div>
+        </div>
+        <canvas id="previewCanvas"></canvas>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const uploadButton = document.getElementById('uploadButton');
+        const previewCanvas = document.getElementById('previewCanvas');
+        const maxWidthInput = document.getElementById('maxWidth');
+        const maxHeightInput = document.getElementById('maxHeight');
+        const colorModeSelect = document.getElementById('colorMode');
+        const ctx = previewCanvas.getContext('2d');
+        let originalImage = null;
+
+        const limitedPalette = [
+            '#FFFFFF', '#E4E4E4', '#888888', '#222222', '#FFA7D1', '#E50000', '#E59500',
+            '#A06A42', '#E5D900', '#94E044', '#02BE01', '#00D3DD', '#0083C7', '#0000EA',
+            '#CF6EE4', '#820080', '#000000', '#FF0000', '#00FF00', '#0000FF', '#FFFF00',
+            '#FF00FF', '#00FFFF', '#FFA500', '#800080', '#008000', '#000080', '#808080'
+        ];
+
+        uploadButton.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files?.[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    originalImage = new Image();
+                    originalImage.onload = () => {
+                        convertImage();
+                    };
+                    originalImage.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        maxWidthInput.addEventListener('input', convertImage);
+        maxHeightInput.addEventListener('input', convertImage);
+        colorModeSelect.addEventListener('change', convertImage);
+
+        function convertImage() {
+            if (!originalImage) return;
+
+            const maxWidth = parseInt(maxWidthInput.value);
+            const maxHeight = parseInt(maxHeightInput.value);
+            const colorMode = colorModeSelect.value;
+
+            // Use a temporary canvas for the actual conversion
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            let width = originalImage.width;
+            let height = originalImage.height;
+
+            if (width > maxWidth) {
+                height *= maxWidth / width;
+                width = maxWidth;
+            }
+            if (height > maxHeight) {
+                width *= maxHeight / height;
+                height = maxHeight;
+            }
+
+            width = Math.floor(width);
+            height = Math.floor(height);
+            
+            tempCanvas.width = width;
+            tempCanvas.height = height;
+            tempCtx.drawImage(originalImage, 0, 0, width, height);
+
+            const imageData = tempCtx.getImageData(0, 0, width, height);
+            const data = imageData.data;
+
+            // Convert colors on the temporary canvas
+            for (let i = 0; i < data.length; i += 4) {
+                let r = data[i];
+                let g = data[i + 1];
+                let b = data[i + 2];
+                const a = data[i + 3];
+
+                if (a > 128) {
+                    if (colorMode === 'palette') {
+                        const closest = findClosestPaletteColor(rgbToHex(r, g, b));
+                        const rgb = hexToRgb(closest);
+                        r = rgb.r;
+                        g = rgb.g;
+                        b = rgb.b;
+                    } else if (colorMode === 'grayscale') {
+                        const gray = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
+                        r = gray;
+                        g = gray;
+                        b = gray;
+                    }
+                }
+                data[i] = r;
+                data[i + 1] = g;
+                data[i + 2] = b;
+            }
+            
+            // Now, draw the converted image to the main canvas with larger pixels
+            const displaySize = Math.max(500, 500); // Minimum 500x500 display area
+            const pixelSize = Math.floor(displaySize / Math.max(width, height));
+            previewCanvas.width = width * pixelSize;
+            previewCanvas.height = height * pixelSize;
+
+            ctx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    const index = (y * width + x) * 4;
+                    const r = data[index];
+                    const g = data[index + 1];
+                    const b = data[index + 2];
+                    const hexColor = rgbToHex(r, g, b);
+                    
+                    ctx.fillStyle = hexColor;
+                    ctx.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
+                }
+            }
+        }
+
+        function rgbToHex(r, g, b) {
+            return '#' + [r, g, b].map(x => {
+                const hex = x.toString(16);
+                return hex.length === 1 ? '0' + hex : hex;
+            }).join('');
+        }
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        function findClosestPaletteColor(targetColor) {
+            const target = hexToRgb(targetColor);
+            if (!target) return targetColor;
+
+            let closestColor = limitedPalette[0];
+            let minDistance = Infinity;
+
+            limitedPalette.forEach(paletteColor => {
+                const palette = hexToRgb(paletteColor);
+                if (palette) {
+                    const distance = Math.sqrt(
+                        Math.pow(target.r - palette.r, 2) +
+                        Math.pow(target.g - palette.g, 2) +
+                        Math.pow(target.b - palette.b, 2)
+                    );
+
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        closestColor = paletteColor;
+                    }
+                }
+            });
+            return closestColor;
+        }
+    </script>
+</body>
+</html>
