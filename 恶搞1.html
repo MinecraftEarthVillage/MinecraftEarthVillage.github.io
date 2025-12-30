@@ -3,7 +3,6 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no"/>
     <meta charset="utf-8">
-    <title>愚人节快乐！</title>
     <script type="text/javascript" src="https://mooc1.chaoxing.com/ananas/static/js/domain.js?v=2022-1227-1713"></script>
     <script type="text/javascript" src="https://mooc1.chaoxing.com/ananas/jquery-3.5.1/jquery-3.5.1.min.js"></script>
 </head>
@@ -72,13 +71,13 @@
 
 <!-- 隐藏的音频用于播放音效 -->
 <audio id="sfx" preload="auto">
-    <source src="https://www.soundjay.com/buttons/beep-07.wav" type="audio/wav">
+    <source src="https://www.myinstants.com//media/sounds/sad-trombone-sound-effect-wah-wah-wah-fail-sound-fail-horns.mp3" type="audio/wav">
 </audio>
 
 <script type="text/javascript">
     // 愚人节恶搞主函数
     function aprilFoolsJoke() {
-        console.log('🎭 愚人节恶搞启动！');
+        console.log('🎭 恶搞启动！');
         
         // 1. 播放奇怪音效
         try {
@@ -89,14 +88,14 @@
         
         // 2. 弹出一系列搞笑弹窗
         setTimeout(() => alert('🤔 咦？好像哪里不对劲...'), 300);
-        setTimeout(() => alert('🎭 今天是愚人节！你被整蛊啦！'), 800);
+        setTimeout(() => alert('🎭 你被整蛊啦！'), 800);
         setTimeout(() => {
             const jokes = [
                 '🐔 鸡你太美！',
                 '🚀 你的电脑即将起飞...',
                 '👻 有鬼啊！快跑！',
                 '🎮 游戏时间到！',
-                '🍌 香蕉你个巴拉！'
+                '🍌 大香蕉一根大香蕉~~~'
             ];
             alert(jokes[Math.floor(Math.random() * jokes.length)]);
         }, 1500);
@@ -150,16 +149,16 @@
         setTimeout(() => {
             clearInterval(titleInterval);
             document.title = originalTitle;
-            alert('🎉 愚人节快乐！玩笑结束～');
+            alert('🎉 玩笑结束～');
         }, 30000);
     }
     
     // 页面加载完成后立即启动一部分恶搞
     $(function () {
-        console.log('🎭 愚人节组件已加载');
+        console.log('🎭 恶搞组件已加载');
         
         // 修改附件显示为愚人节主题
-        $(".dataName").text("🎭 愚人节惊喜包");
+        $(".dataName").text("🎭 惊喜");
         $(".dataSize").text("点击开启整蛊模式");
         $(".attachImg").attr("src", "https://mooc1.chaoxing.com/ananas/common-modules/attachment/icon/zip.png");
         
