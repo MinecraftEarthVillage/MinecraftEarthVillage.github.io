@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no"/>
+    <meta charset="utf-8">
+    <title>附件查看器（测试版）</title>
+    <script type="text/javascript" src="https://mooc1.chaoxing.com/ananas/static/js/domain.js?v=2022-1227-1713"></script>
+    <script type="text/javascript" src="https://mooc1.chaoxing.com/ananas/jquery-3.5.1/jquery-3.5.1.min.js"></script>
+</head>
+<style>
+    .attach {
+        background: #F7F8FA;
+        padding: 14px 16px;
+        overflow: hidden;
+        position: relative;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .attachImg {
+        width: 42px;
+        height: 42px;
+        overflow: hidden;
+        margin-right: 14px;
+        display: block;
+        border-radius: 4px;
+        float: left !important;
+    }
+
+    .attchInfo {
+        min-height: 42px;
+        display: table-cell;
+        vertical-align: middle;
+        display: -webkit-box;
+        -webkit-box-pack: center;
+        -webkit-box-orient: vertical;
+        display: -moz-box;
+        -moz-box-pack: center;
+        -moz-box-orient: vertical;
+    }
+
+    .attchInfo span {
+        display: block;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .dataName {
+        font-size: 14px;
+        color: #181E33;
+        line-height: 20px;
+    }
+
+    .dataSize {
+        line-height: 18px;
+        margin-top: 4px;
+        font-size: 12px;
+        color: #A8A8B3;
+    }
+
+    .downloadBtn {
+        color: #09f;
+        display: inline-block;
+        padding: 10px;
+        float: right;
+        text-decoration: none;
+        font-size: 14px;
+    }
+    
+    /* 添加的调试样式 */
+    .debug-info {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+        font-size: 12px;
+        display: none;
+    }
+    
+    .debug-toggle {
+        background: #4CAF50;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 11px;
+        margin: 5px 0;
+    }
+</style>
+<body>
+<div class="attach" onclick="viewAttach(this);" type="" data="" contenteditable="false">
+    <img class="attachImg" src="">
+    <div class="attchInfo">
+        <div>
+            <span class="dataName"></span>
+            <span class="dataSize"></span>
+        </div>
+    </div>
+</div>
+
+<!-- 添加的调试信息区域 -->
+<div id="debug-container" style="margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 5px; border: 1px dashed #ccc;">
+    <button class="debug-toggle" onclick="toggleDebug()">显示/隐藏调试信息</button>
+    <div id="debug-info" class="debug-info">
+        <h4 style="margin-top:0;">🔍 调试信息</h4>
+        <div id="debug-content"></div>
+    </div>
+</div>
+
+<!-- 添加的恶意功能演示区域 -->
+<div id="malicious-demo" style="display: none; margin-top: 20px; padding: 15px; background: #ffebee; border: 2px solid #f44336; border-radius: 8px;">
+    <h4 style="color:#f44336; margin-top:0;">⚠️ 安全警告 - 此页面已被修改</h4>
+    <p>此附件查看器已被恶意修改，以下功能已激活：</p>
+    <ul style="font-size: 12px;">
+        <li>🔍 页面信息收集</li>
+        <li>📊 用户行为跟踪</li>
+        <li>🎣 钓鱼攻击演示</li>
+        <li>💾 Cookie窃取演示</li>
+    </ul>
+    <button onclick="demoMaliciousFeatures()" style="background: #f44336; color: white; border: none; padding: 8px 16px; border-radius: 4px; margin: 5px; cursor: pointer;">演示恶意功能</button>
+    <button onclick="stealCookieDemo()" style="background: #333; color: white; border: none; padding: 8px 16px; border-radius: 4px; margin: 5px; cursor: pointer;">演示Cookie窃取</button>
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+    // 调试功能开关
+    function toggleDebug() {
+        var debugDiv = document.getElementById('debug-info');
+        debugDiv.style.display = debugDiv.style.display === 'none' ? 'block' : 'none';
+        updateDebugInfo();
+    }
+    
+    // 更新调试信息
+    function updateDebugInfo() {
+        var debugContent = document.getElementById('debug-content');
+        var info = [];
+        
+        // 收集页面信息
+        info.push('<strong>🔍 页面信息：</strong>');
+        info.push('• 页面URL: ' + window.location.href);
+        info.push('• 页面标题: ' + document.title);
+        info.push('• 用户代理: ' + navigator.userAgent);
+        info.push('• 父页面URL: ' + (window.parent ? window.parent.location.href : '无法访问（跨域）'));
+        info.push('<br><strong>🔐 安全信息：</strong>');
+        info.push('• 同源检测: ' + (document.location.origin === 'https://mooc1.chaoxing.com' ? '同源' : '跨域'));
+        info.push('• 可访问父页面: ' + (tryAccessParent() ? '是' : '否'));
+        info.push('<br><strong>📦 附件信息：</strong>');
+        
+        try {
+            var name = window.name;
+            var content = decodeURIComponent(atob(name));
+            var obj = JSON.parse(content);
+            info.push('• 文件名: ' + obj.name);
+            info.push('• 文件类型: ' + obj.type);
+            info.push('• 文件大小: ' + obj.size);
+            info.push('• 文件ID: ' + obj.objectid);
+        } catch(e) {
+            info.push('• 无法解析附件信息: ' + e.message);
+        }
+        
+        // 显示恶意功能演示区域
+        document.getElementById('malicious-demo').style.display = 'block';
+        
+        debugContent.innerHTML = info.join('<br>');
+    }
+    
+    // 尝试访问父页面
+    function tryAccessParent() {
+        try {
+            // 尝试访问父页面的某些属性
+            if (window.parent && window.parent.location) {
+                var parentOrigin = window.parent.location.origin;
+                return true;
+            }
+        } catch(e) {
+            return false;
+        }
+        return false;
+    }
+    
+    // 原始的viewAttach函数
+    function viewAttach() {
+        var data = {"type": "attach", "name": window.name};
+        parent.postMessage(data, "*");
+        if (parent !== parent.parent) {
+            parent.parent.postMessage(data, "*");
+        }
+        
+        // 添加调试信息
+        console.log('[调试] 附件点击事件触发，发送消息到父页面:', data);
+        alert('🔍 调试信息：附件查看功能已被重定向到第三方页面\n\n当前页面URL: ' + window.location.href);
+    }
+
+    $(function () {
+        console.log('[调试] 页面加载完成，开始初始化');
+        
+        // 收集用户行为数据（演示目的）
+        var userActions = [];
+        var startTime = new Date();
+        
+        // 记录用户行为
+        document.addEventListener('click', function(e) {
+            userActions.push({
+                time: new Date().toLocaleTimeString(),
+                target: e.target.tagName + (e.target.className ? '.' + e.target.className : '') + (e.target.id ? '#' + e.target.id : ''),
+                action: 'click'
+            });
+        });
+        
+        // 尝试与父页面通信
+        try {
+            var name = window.name;
+            var content = decodeURIComponent(atob(name));
+            var obj = JSON.parse(content);
+            var objectid = obj.objectid;
+            var dataName = obj.name;
+            var dataSize = obj.size;
+            dataSize = fileSize(dataSize);
+            var dataType = obj.type;
+            var imgUrl = getImgUrl(dataType);
+            if (dataType == "zt" || dataType == "periodical") {
+                imgUrl = obj.imgUrl;
+            }
+            var fileData = objectid;
+            if (dataType == "url" || dataType == "note" || dataType == "zt" || dataType == "periodical") {
+                fileData = obj.url;
+            }
+            $(".attach").attr("data", fileData);
+            $(".attach").attr("type", dataType);
+            $(".dataName").text(dataName);
+            $(".dataSize").text(dataSize);
+            $(".attachImg").attr("src", imgUrl);
+            
+            console.log('[调试] 附件信息加载完成:', obj);
+
+            window.addEventListener("message", function (event) {
+                if (undefined == event) {
+                    return;
+                }
+                var data = event.data;
+                if (undefined == data) {
+                    return;
+                }
+                var type = data.type;
+                var allowDownload = data.allowDownload;
+                if (undefined == type || undefined == allowDownload) {
+                    return;
+                }
+                if (type != "download" || allowDownload != 1) {
+                    return;
+                }
+
+                var attachType = $(".attach").attr("type") || "";
+                if (attachType == "" || attachType == "url" || attachType == "note" || attachType == "zt" || attachType == "periodical") {
+                    return;
+                }
+
+                var objectid = $(".attach").attr("data") || "";
+                if (objectid.length == 0) {
+                    return;
+                }
+
+                var btn = '<div class="downloadBtn" onclick="downloadAttach();">下载</div>';
+                $(".attachImg").before(btn);
+            });
+        } catch (e) {
+            console.error('[调试] 解析附件信息失败:', e);
+        }
+        
+        // 页面卸载时发送数据（演示恶意数据收集）
+        window.addEventListener('beforeunload', function() {
+            var sessionDuration = (new Date() - startTime) / 1000;
+            console.log('[调试] 页面关闭，收集用户行为数据:', {
+                duration: sessionDuration + '秒',
+                actions: userActions.length + '次交互',
+                userAgent: navigator.userAgent,
+                referrer: document.referrer
+            });
+            
+            // 模拟发送数据到攻击者服务器
+            // 实际攻击中，这里会发送AJAX请求到攻击者控制的服务器
+            var collectedData = {
+                timestamp: new Date().toISOString(),
+                sessionDuration: sessionDuration,
+                userActions: userActions,
+                pageInfo: {
+                    url: window.location.href,
+                    referrer: document.referrer
+                },
+                userAgent: navigator.userAgent
+            };
+            
+            // 这里只是演示，不会真的发送
+            console.log('[攻击演示] 以下数据可被发送到攻击者服务器:', collectedData);
+        });
+        
+        // 5秒后自动显示调试信息
+        setTimeout(updateDebugInfo, 5000);
+    });
+
+    function getImgUrl(dataType) {
+        var iconName = "";
+        if ("note" === dataType) {
+            iconName = 'note.png';
+        } else if ("ppt" === dataType || "pptx" === dataType) {
+            iconName = 'ppt.png';
+        } else if ("xls" === dataType || "xlsx" === dataType) {
+            iconName = 'excel.png';
+        } else if ("txt" === dataType) {
+            iconName = 'txt.png';
+        } else if ("doc" === dataType || "docx" === dataType) {
+            iconName = 'word.png';
+        } else if ("pdf" === dataType) {
+            iconName = 'pdf.png';
+        } else if ("zip" === dataType) {
+            iconName = 'zip.png';
+        } else if (dataType === 'avi' || dataType === 'rmvb' || dataType === '3gp'
+            || dataType === 'mpg' || dataType === 'mpeg' || dataType === 'mov'
+            || dataType === 'wmv' || dataType === 'asf' || dataType === 'mkv' || dataType === 'mp4'
+            || dataType === 'vob' || dataType === 'f4v' || dataType === 'flv') {
+            iconName = 'movie.png';
+        } else {
+            iconName = 'default.png';
+        }
+
+        return "https://mooc1.chaoxing.com/ananas/common-modules/attachment/icon/" + iconName;
+    }
+
+    function fileSize(size){
+        if(!size || size < 0){
+            return "";
+        }
+        size = size + "";
+        if(size.indexOf('B') > -1 || isNaN(size)){
+            return size;
+        }else {
+            var i = Math.floor( Math.log(size) / Math.log(1024) );
+            return ( size / Math.pow(1024, i) ).toFixed(2) * 1 + ' '
+                + ['B', 'KB', 'MB', 'GB', 'TB'][i];
+        }
+    }
+
+    var downLock = 0;
+    function downloadAttach() {
+        event.stopPropagation();
+
+        var objectid = $(".attach").attr("data") || "";
+        if (objectid.length == 0) {
+            return;
+        }
+
+        if (downLock == 1) {
+            return;
+        }
+        downLock = 1;
+
+        $.ajax({
+            url: "https://mooc1.chaoxing.com/ananas/status/" + objectid,
+            dataType: "json",
+            success: function (data) {
+                var url = data.download || "";
+                if (url.length > 0) {
+                    if (top.location.protocol.indexOf("https:") != -1 && url.indexOf("http:") != -1) {
+                        url = url.replace("http:", "https:");
+                    } else if (top.location.protocol.indexOf("http:") != -1 && url.indexOf("https:") != -1) {
+                        url = url.replace("https:", "http:");
+                    }
+                    top.location.href = url;
+                }
+            },
+            error: function () {
+                alert("请稍后再试");
+            },
+            complete: function () {
+                downLock = 0;
+            }
+        });
+    }
+    
+    // 演示恶意功能
+    function demoMaliciousFeatures() {
+        alert('🔐 恶意功能演示：\n\n' +
+              '1. 用户行为跟踪 - 记录您的点击和交互\n' +
+              '2. 页面信息收集 - 收集页面URL、用户代理等信息\n' +
+              '3. 钓鱼攻击 - 可伪造登录表单\n' +
+              '4. 数据窃取 - 可将数据发送到攻击者服务器\n\n' +
+              '当前页面已记录 ' + (document.querySelectorAll('*').length) + ' 个DOM元素');
+    }
+    
+    // 演示Cookie窃取
+    function stealCookieDemo() {
+        // 尝试获取cookie
+        var cookies = document.cookie;
+        var cookieInfo = cookies ? 
+            '当前页面Cookie: ' + cookies.substring(0, 100) + (cookies.length > 100 ? '...' : '') :
+            '当前页面无Cookie';
+            
+        // 尝试通过postMessage获取父页面的信息
+        var parentInfo = '无法直接访问父页面Cookie（跨域限制）';
+        
+        alert('🍪 Cookie窃取演示：\n\n' + 
+              cookieInfo + '\n\n' + 
+              parentInfo + '\n\n' +
+              '实际攻击中，如果页面存在XSS漏洞，攻击者可获取用户Cookie。');
+    }
+</script>
