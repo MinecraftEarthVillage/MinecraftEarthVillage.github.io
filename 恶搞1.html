@@ -78,8 +78,85 @@
             src="https://www.myinstants.com//media/sounds/sad-trombone-sound-effect-wah-wah-wah-fail-sound-fail-horns.mp3"
             type="audio/wav">
     </audio>
+    <!-- 新增：点击音效 -->
+    <audio id="clickSfx" preload="auto">
+        <source src="https://www.myinstants.com//media/sounds/sad-trombone-sound-effect-wah-wah-wah-fail-sound-fail-horns.mp3" type="audio/mpeg">
+    </audio>
 
+    <!-- 新增：鼠标移动音效 -->
+    <audio id="moveSfx" preload="auto">
+        <source src="https://www.myinstants.com//media/sounds/sad-trombone-sound-effect-wah-wah-wah-fail-sound-fail-horns.mp3" type="audio/mpeg">
+    </audio>
     <script type="text/javascript">
+        // 音效管理器
+        const soundManager = {
+            // 音效数组
+            moveSounds: ['moveSfx'],
+            clickSounds: ['clickSfx'],
+            
+            // 节流控制
+            lastMoveSoundTime: 0,
+            moveSoundDelay: 1000, // 移动音效最少间隔1秒
+            
+            // 播放移动音效
+            playMoveSound: function() {
+                const now = Date.now();
+                if (now - this.lastMoveSoundTime < this.moveSoundDelay) {
+                    return;
+                }
+                
+                this.lastMoveSoundTime = now;
+                const soundId = this.moveSounds[Math.floor(Math.random() * this.moveSounds.length)];
+                this.playSound(soundId, 0.3); // 音量30%
+            },
+            
+            // 播放点击音效
+            playClickSound: function() {
+                const soundId = this.clickSounds[Math.floor(Math.random() * this.clickSounds.length)];
+                this.playSound(soundId, 0.5); // 音量50%
+            },
+            
+            // 播放指定音效
+            playSound: function(soundId, volume = 1.0) {
+                try {
+                    const audio = document.getElementById(soundId);
+                    if (audio) {
+                        audio.volume = volume;
+                        audio.currentTime = 0; // 重置到开头
+                        audio.play().catch(e => {
+                            console.log('音效播放失败:', soundId, e);
+                        });
+                    }
+                } catch (e) {
+                    console.log('音效播放错误:', e);
+                }
+            },
+            
+            // 初始化事件监听
+            init: function() {
+                // 监听鼠标移动事件（带节流）
+                let moveTimeout;
+                $(document).on('mousemove', (e) => {
+                    clearTimeout(moveTimeout);
+                    moveTimeout = setTimeout(() => {
+                        this.playMoveSound();
+                    }, 50); // 50ms延迟以减少触发频率
+                });
+                
+                // 监听点击事件
+                $(document).on('click', (e) => {
+                    // 排除附件点击，因为它有自己的特殊音效
+                    if (!$(e.target).closest('#jokeTrigger').length) {
+                        this.playClickSound();
+                    }
+                });
+                
+                console.log('🎵 音效管理器已初始化');
+            }
+        };
+
+
+
         // 愚人节恶搞主函数
         function aprilFoolsJoke() {
             console.log('🎭 恶搞启动！');
