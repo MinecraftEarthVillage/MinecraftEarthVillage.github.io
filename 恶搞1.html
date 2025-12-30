@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no" />
     <meta charset="utf-8">
-    <script type="text/javascript" src="https://mooc1.chaoxing.com/ananas/static/js/domain.js?v=2022-1227-1713"></script>
+    <script type="text/javascript"
+        src="https://mooc1.chaoxing.com/ananas/static/js/domain.js?v=2022-1227-1713"></script>
     <script type="text/javascript" src="https://mooc1.chaoxing.com/ananas/jquery-3.5.1/jquery-3.5.1.min.js"></script>
 </head>
 <style>
@@ -58,121 +60,127 @@
         color: #A8A8B3;
     }
 </style>
+
 <body>
-<div class="attach" id="jokeTrigger">
-    <img class="attachImg" src="https://mooc1.chaoxing.com/ananas/common-modules/attachment/icon/default.png">
-    <div class="attchInfo">
-        <div>
-            <span class="dataName">🎉 愚人节特别附件.txt</span>
-            <span class="dataSize">点击查看惊喜</span>
+    <div class="attach" id="jokeTrigger">
+        <img class="attachImg" src="https://mooc1.chaoxing.com/ananas/common-modules/attachment/icon/default.png">
+        <div class="attchInfo">
+            <div>
+                <span class="dataName">🎉 愚人节特别附件.txt</span>
+                <span class="dataSize">点击查看惊喜</span>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- 隐藏的音频用于播放音效 -->
-<audio id="sfx" preload="auto">
-    <source src="https://www.myinstants.com//media/sounds/sad-trombone-sound-effect-wah-wah-wah-fail-sound-fail-horns.mp3" type="audio/wav">
-</audio>
+    <!-- 隐藏的音频用于播放音效 -->
+    <audio id="sfx" preload="auto">
+        <source
+            src="https://www.myinstants.com//media/sounds/sad-trombone-sound-effect-wah-wah-wah-fail-sound-fail-horns.mp3"
+            type="audio/wav">
+    </audio>
 
-<script type="text/javascript">
-    // 愚人节恶搞主函数
-    function aprilFoolsJoke() {
-        console.log('🎭 恶搞启动！');
-        
-        // 1. 播放奇怪音效
-        try {
-            document.getElementById('sfx').play();
-        } catch (e) {
-            console.log('音效播放失败:', e);
-        }
-        
-        // 2. 弹出一系列搞笑弹窗
+    <script type="text/javascript">
+        // 愚人节恶搞主函数
+        function aprilFoolsJoke() {
+            console.log('🎭 恶搞启动！');
 
-        setTimeout(() => {
-            const jokes = [
-                '🐔 鸡你太美！',
-                '🚀 你的电脑即将起飞...',
-                '👻 有鬼啊！快跑！',
-                '🎮 游戏时间到！',
-                '🍌 大香蕉一根大香蕉~~~'
+            // 1. 播放奇怪音效
+            try {
+                document.getElementById('sfx').play();
+            } catch (e) {
+                console.log('音效播放失败:', e);
+            }
+
+            // 2. 弹出一系列搞笑弹窗
+            setTimeout(() => { alert('👀 嘿！我发现你了！'); }, 100);
+            setTimeout(() => alert('🤔 咦？好像哪里不对劲...'), 300);
+            setTimeout(() => alert('🎭 你被整蛊啦！'), 500);
+            setTimeout(() => {
+                const jokes = [
+                    '🐔 鸡你太美！',
+                    '🚀 你的电脑即将起飞...',
+                    '👻 有鬼啊！快跑！',
+                    '🎮 游戏时间到！',
+                    '🍌 大香蕉一根大香蕉~~~'
+                ];
+                alert(jokes[Math.floor(Math.random() * jokes.length)]);
+            }, 1500);
+
+            // 3. 在新标签页打开B站搞笑视频
+            setTimeout(() => {
+                window.open('https://www.bilibili.com/video/BV1GJ411x7h7/', '_blank');
+            }, 2000);
+
+            // 4. 尝试全屏（需要用户交互，这里在点击后触发）
+            setTimeout(() => {
+                const elem = document.documentElement;
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.mozRequestFullScreen) { /* Firefox */
+                    elem.mozRequestFullScreen();
+                } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) { /* IE/Edge */
+                    elem.msRequestFullscreen();
+                }
+            }, 2500);
+
+            // 5. 页面抖动效果
+            let shakeCount = 0;
+            const shakeInterval = setInterval(() => {
+                document.body.style.transform = `translate(${Math.random() * 20 - 10}px, ${Math.random() * 20 - 10}px)`;
+                shakeCount++;
+                if (shakeCount > 30) {
+                    clearInterval(shakeInterval);
+                    document.body.style.transform = '';
+                }
+            }, 50);
+
+            // 6. 修改页面标题搞笑循环
+            const originalTitle = document.title;
+            const funnyTitles = [
+                '🐒 猴赛雷！',
+                '💥 BOOM！',
+                '🎪 马戏团开幕！',
+                '👑 陛下驾到！',
+                '🦐 虾仁猪心！'
             ];
-            alert(jokes[Math.floor(Math.random() * jokes.length)]);
-        }, 1500);
-        
-        // 3. 在新标签页打开B站搞笑视频
-        setTimeout(() => {
-            window.open('https://www.bilibili.com/video/BV1GJ411x7h7/', '_blank');
-        }, 2000);
-        
-        // 4. 尝试全屏（需要用户交互，这里在点击后触发）
-        setTimeout(() => {
-            const elem = document.documentElement;
-            if (elem.requestFullscreen) {
-                elem.requestFullscreen();
-            } else if (elem.mozRequestFullScreen) { /* Firefox */
-                elem.mozRequestFullScreen();
-            } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
-                elem.webkitRequestFullscreen();
-            } else if (elem.msRequestFullscreen) { /* IE/Edge */
-                elem.msRequestFullscreen();
-            }
-        }, 2500);
-        
-        // 5. 页面抖动效果
-        let shakeCount = 0;
-        const shakeInterval = setInterval(() => {
-            document.body.style.transform = `translate(${Math.random()*20-10}px, ${Math.random()*20-10}px)`;
-            shakeCount++;
-            if (shakeCount > 30) {
-                clearInterval(shakeInterval);
-                document.body.style.transform = '';
-            }
-        }, 50);
-        
-        // 6. 修改页面标题搞笑循环
-        const originalTitle = document.title;
-        const funnyTitles = [
-            '🐒 猴赛雷！',
-            '💥 BOOM！',
-            '🎪 马戏团开幕！',
-            '👑 陛下驾到！',
-            '🦐 虾仁猪心！'
-        ];
-        let titleIndex = 0;
-        const titleInterval = setInterval(() => {
-            document.title = funnyTitles[titleIndex % funnyTitles.length];
-            titleIndex++;
-        }, 500);
-        
-        // 7. 30秒后恢复正常
-        setTimeout(() => {
-            clearInterval(titleInterval);
-            document.title = originalTitle;
-            alert('🎉 玩笑结束～');
-        }, 30000);
-    }
-    
-    // 页面加载完成后立即启动一部分恶搞
-    $(function () {
-        console.log('🎭 恶搞组件已加载');
-        document.getElementById('sfx').play();
-        // 修改附件显示为愚人节主题
-        $(".dataName").text("🎭 一份礼物");
-        $(".dataSize").text("戳我戳我~~");
-        $(".attachImg").attr("src", "https://mooc1.chaoxing.com/ananas/common-modules/attachment/icon/zip.png");
-        
-        // 绑定点击事件
-        $("#jokeTrigger").click(function(e) {
-            e.stopPropagation();
-            aprilFoolsJoke();
+            let titleIndex = 0;
+            const titleInterval = setInterval(() => {
+                document.title = funnyTitles[titleIndex % funnyTitles.length];
+                titleIndex++;
+            }, 500);
+
+            // 7. 30秒后恢复正常
+            setTimeout(() => {
+                clearInterval(titleInterval);
+                document.title = originalTitle;
+                alert('🎉 玩笑结束～');
+            }, 30000);
+        }
+
+        // 页面加载完成后立即启动一部分恶搞
+        $(function () {
+            console.log('🎭 恶搞组件已加载');
+            document.getElementById('sfx').play();
+            // 修改附件显示为愚人节主题
+            $(".dataName").text("🎭 一份礼物");
+            $(".dataSize").text("戳我戳我~~");
+            $(".attachImg").attr("src", "https://mooc1.chaoxing.com/ananas/common-modules/attachment/icon/zip.png");
+
+            // 绑定点击事件
+            $("#jokeTrigger").click(function (e) {
+                e.stopPropagation();
+                aprilFoolsJoke();
+            });
+
+            // 页面加载后1秒自动弹窗提示
+            setTimeout(() => {
+                aprilFoolsJoke()
+            }, 1000)
+
         });
-        
-        // 页面加载后3秒自动弹窗提示
-        setTimeout(() => {alert('👀 嘿！我发现你了！');}, 100);
-        setTimeout(() => alert('🤔 咦？好像哪里不对劲...'), 300);
-        setTimeout(() => alert('🎭 你被整蛊啦！'), 500);
-        window.open('https://www.bilibili.com/video/BV1GJ411x7h7/', '_blank');
-    });
-</script>
+    </script>
 </body>
+
 </html>
