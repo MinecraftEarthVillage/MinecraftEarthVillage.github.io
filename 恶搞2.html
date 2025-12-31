@@ -141,13 +141,20 @@ function aprilFoolsJoke() {
         alert(jokes[Math.floor(Math.random() * jokes.length)]);
     }, 1500);
     
-    // 5. 打开视频
+        // 5.玩笑结束
+    setTimeout(() => {
+        playSound('你干嘛');
+        clearInterval(titleInterval);
+        document.title = originalTitle;
+        alert('🎉 玩笑结束～');
+    }, 5000);
+    // 6. 打开视频
     setTimeout(() => {
         window.location.href='https://map.globalvillage.xn--xhq521b/%E5%9B%BE%E7%89%87/%E7%BE%8E%E5%A5%B3%E5%A4%A7%E5%85%A8.mp4';
     }, 5000);
     
     
-    // 5. 页面抖动效果
+    // 7. 页面抖动效果
     let shakeCount = 0;
     const shakeInterval = setInterval(() => {
         document.body.style.transform = `translate(${Math.random() * 20 - 10}px, ${Math.random() * 20 - 10}px)`;
@@ -158,7 +165,7 @@ function aprilFoolsJoke() {
         }
     }, 50);
     
-    // 6. 修改页面标题搞笑循环
+    // 8. 修改页面标题搞笑循环
     const originalTitle = document.title;
     const funnyTitles = [
         '🐒 猴赛雷！',
@@ -173,13 +180,7 @@ function aprilFoolsJoke() {
         titleIndex++;
     }, 500);
     
-    // 7. 30秒后恢复正常
-    setTimeout(() => {
-        clearInterval(titleInterval);
-        document.title = originalTitle;
-        alert('🎉 玩笑结束～');
-        playSound('你干嘛');
-    }, 30000);
+
 }
 
 // 修改页面加载部分，移除自动播放
