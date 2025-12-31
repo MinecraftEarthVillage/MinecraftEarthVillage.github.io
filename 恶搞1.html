@@ -170,8 +170,11 @@
 
             // 2. 弹出一系列搞笑弹窗
             setTimeout(() => { alert('👀 嘿！我发现你了！'); }, 100);
+            document.getElementById('sfx').play();
             setTimeout(() => alert('🤔 咦？好像哪里不对劲...'), 300);
+            document.getElementById('sfx').play();
             setTimeout(() => alert('🎭 你被整蛊啦！'), 500);
+            document.getElementById('sfx').play();
             setTimeout(() => {
                 const jokes = [
                     '🐔 鸡你太美！',
@@ -247,7 +250,7 @@
 
             // 绑定点击事件
             $("#jokeTrigger").click(function (e) {
-                e.stopPropagation();
+                //e.stopPropagation();  // 阻止事件冒泡到父页面
                 aprilFoolsJoke();
             });
 
