@@ -73,19 +73,18 @@
     </div>
 
     <!-- 隐藏的音频用于播放音效 -->
-    <audio id="sfx" preload="auto">
+    <audio id="默认" preload="auto">
         <source
-            src="https://www.myinstants.com//media/sounds/sad-trombone-sound-effect-wah-wah-wah-fail-sound-fail-horns.mp3"
+            src="https://www.myinstants.com/media/sounds/sad-trombone-sound-effect-wah-wah-wah-fail-sound-fail-horns.mp3"
             type="audio/wav">
     </audio>
-    <!-- 新增：点击音效 -->
-    <audio id="clickSfx" preload="auto">
-        <source src="https://www.myinstants.com//media/sounds/sad-trombone-sound-effect-wah-wah-wah-fail-sound-fail-horns.mp3" type="audio/mpeg">
+    <audio id="你干嘛" preload="auto">
+        <source
+            src="https://www.globalvillage.广东/music/你干嘛.ogg">
     </audio>
-
-    <!-- 新增：鼠标移动音效 -->
-    <audio id="moveSfx" preload="auto">
-        <source src="https://www.myinstants.com//media/sounds/sad-trombone-sound-effect-wah-wah-wah-fail-sound-fail-horns.mp3" type="audio/mpeg">
+    <audio id="鸡" preload="auto">
+        <source
+            src="https://www.globalvillage.广东/music/鸡.ogg">
     </audio>
     <script>
 // 修改后的愚人节恶搞主函数
@@ -95,15 +94,18 @@ function aprilFoolsJoke() {
     let audioPlayedCount = 0;
     
     // 直接播放音频，不要包装在setTimeout里
-    function playSound() {
+    // 修改后的playSound函数，可以传入音频ID
+    function playSound(audioId = '默认') {
         audioPlayedCount++;
         try {
-            const sfx = document.getElementById('sfx');
-            if (sfx) {
-                sfx.currentTime = 0;
-                sfx.play().catch(e => {
+            const audioElement = document.getElementById(audioId);
+            if (audioElement) {
+                audioElement.currentTime = 0;
+                audioElement.play().catch(e => {
                     console.log('音频播放失败:', e);
                 });
+            } else {
+                console.log('未找到音频元素:', audioId);
             }
         } catch (e) {
             console.log('音频播放错误:', e);
@@ -111,18 +113,18 @@ function aprilFoolsJoke() {
     }
     
     // 1. 立即播放第一个音效（在第一个alert之前）
-    playSound();
+    playSound('默认');
     alert('👀👀 嘿！我发现你了！');
     
     // 2. 第二个alert
     setTimeout(() => {
-        playSound();
+        playSound('默认');
         alert('🤔🤔 咦？好像哪里不对劲...');
     }, 100);
     
     // 3. 第三个alert  
     setTimeout(() => {
-        playSound();
+        playSound('默认');
         alert('🎭🎭 你被整蛊啦！');
     }, 300);
     
@@ -135,13 +137,13 @@ function aprilFoolsJoke() {
             '🎮🎮 游戏时间到！',
             '🍌🍌 大香蕉一根大香蕉~~~'
         ];
-        playSound();
+        playSound('鸡');
         alert(jokes[Math.floor(Math.random() * jokes.length)]);
     }, 1500);
     
-    // 5. 打开B站
+    // 5. 打开视频
     setTimeout(() => {
-        window.location.href='https://www.bilibili.com/video/BV1GJ411x7h7/';
+        window.location.href='https://map.globalvillage.xn--xhq521b/%E5%9B%BE%E7%89%87/%E7%BE%8E%E5%A5%B3%E5%A4%A7%E5%85%A8.mp4';
     }, 5000);
     
     
@@ -176,6 +178,7 @@ function aprilFoolsJoke() {
         clearInterval(titleInterval);
         document.title = originalTitle;
         alert('🎉 玩笑结束～');
+        playSound('你干嘛');
     }, 30000);
 }
 
