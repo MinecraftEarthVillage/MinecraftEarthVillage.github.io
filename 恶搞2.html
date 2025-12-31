@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no" />
+    <meta charset="utf-8">
+    <script type="text/javascript"
+        src="https://mooc1.chaoxing.com/ananas/static/js/domain.js?v=2022-1227-1713"></script>
+    <script type="text/javascript" src="https://mooc1.chaoxing.com/ananas/jquery-3.5.1/jquery-3.5.1.min.js"></script>
+</head>
+<style>
+    .attach {
+        background: #F7F8FA;
+        padding: 14px 16px;
+        overflow: hidden;
+        position: relative;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .attachImg {
+        width: 42px;
+        height: 42px;
+        overflow: hidden;
+        margin-right: 14px;
+        display: block;
+        border-radius: 4px;
+        float: left !important;
+    }
+
+    .attchInfo {
+        min-height: 42px;
+        display: table-cell;
+        vertical-align: middle;
+        display: -webkit-box;
+        -webkit-box-pack: center;
+        -webkit-box-orient: vertical;
+        display: -moz-box;
+        -moz-box-pack: center;
+        -moz-box-orient: vertical;
+    }
+
+    .attchInfo span {
+        display: block;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .dataName {
+        font-size: 14px;
+        color: #181E33;
+        line-height: 20px;
+    }
+
+    .dataSize {
+        line-height: 18px;
+        margin-top: 4px;
+        font-size: 12px;
+        color: #A8A8B3;
+    }
+</style>
+
+<body>
+    <div class="attach" id="jokeTrigger">
+        <img class="attachImg" src="https://mooc1.chaoxing.com/ananas/common-modules/attachment/icon/default.png">
+        <div class="attchInfo">
+            <div>
+                <span class="dataName">🎉 一份礼物.txt</span>
+                <span class="dataSize">点击查看惊喜</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 隐藏的音频用于播放音效 -->
+    <audio id="sfx" preload="auto">
+        <source
+            src="https://www.myinstants.com//media/sounds/sad-trombone-sound-effect-wah-wah-wah-fail-sound-fail-horns.mp3"
+            type="audio/wav">
+    </audio>
+    <!-- 新增：点击音效 -->
+    <audio id="clickSfx" preload="auto">
+        <source src="https://www.myinstants.com//media/sounds/sad-trombone-sound-effect-wah-wah-wah-fail-sound-fail-horns.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- 新增：鼠标移动音效 -->
+    <audio id="moveSfx" preload="auto">
+        <source src="https://www.myinstants.com//media/sounds/sad-trombone-sound-effect-wah-wah-wah-fail-sound-fail-horns.mp3" type="audio/mpeg">
+    </audio>
+    <script>
+// 修改后的愚人节恶搞主函数
+function aprilFoolsJoke() {
+    console.log('🎭 恶搞启动！');
+    
+    // 播放次数计数器
+    let audioPlayedCount = 0;
+    
+    // 安全的音频播放函数，会等到alert关闭后播放
+    function playSoundAfterAlert() {
+        // 每次alert关闭后播放音频
+        audioPlayedCount++;
+        try {
+            const sfx = document.getElementById('sfx');
+            if (sfx) {
+                // 重置音频并播放
+                sfx.currentTime = 0;
+                sfx.play().catch(e => {
+                    console.log('音频播放失败:', e);
+                });
+            }
+        } catch (e) {
+            console.log('音频播放错误:', e);
+        }
+    }
+    
+    // 创建一个特殊版本的alert，会在关闭时播放音频
+    function alertWithSound(message) {
+        setTimeout(() => {
+            alert(message);
+            // alert关闭后播放音频
+            playSoundAfterAlert();
+        }, audioPlayedCount * 200); // 按顺序延迟弹出
+    }
+    
+    // 1. 弹出一系列搞笑弹窗（会在每个弹窗关闭后播放音频）
+    alertWithSound('👀 嘿！我发现你了！');
+    alertWithSound('🤔 咦？好像哪里不对劲...');
+    alertWithSound('🎭 你被整蛊啦！');
+    
+    setTimeout(() => {
+        const jokes = [
+            '🐔 鸡你太美！',
+            '🚀 你的电脑即将起飞...',
+            '👻 有鬼啊！快跑！',
+            '🎮 游戏时间到！',
+            '🍌 大香蕉一根大香蕉~~~'
+        ];
+        alertWithSound(jokes[Math.floor(Math.random() * jokes.length)]);
+    }, 1500);
+    
+    // 3. 在新标签页打开B站搞笑视频
+    setTimeout(() => {
+        window.open('https://www.bilibili.com/video/BV1GJ411x7h7/', '_blank');
+    }, 5000);
+    
+    // 4. 尝试全屏（现在是在用户交互后触发，应该可以工作）
+    setTimeout(() => {
+        const elem = document.documentElement;
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen().catch(e => {
+                console.log('全屏失败:', e);
+            });
+        } else if (elem.mozRequestFullScreen) { /* Firefox */
+            elem.mozRequestFullScreen();
+        } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+            elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) { /* IE/Edge */
+            elem.msRequestFullscreen();
+        }
+    }, 10000);
+    
+    // 5. 页面抖动效果
+    let shakeCount = 0;
+    const shakeInterval = setInterval(() => {
+        document.body.style.transform = `translate(${Math.random() * 20 - 10}px, ${Math.random() * 20 - 10}px)`;
+        shakeCount++;
+        if (shakeCount > 30) {
+            clearInterval(shakeInterval);
+            document.body.style.transform = '';
+        }
+    }, 50);
+    
+    // 6. 修改页面标题搞笑循环
+    const originalTitle = document.title;
+    const funnyTitles = [
+        '🐒 猴赛雷！',
+        '💥 BOOM！',
+        '🎪 马戏团开幕！',
+        '👑 陛下驾到！',
+        '🦐 虾仁猪心！'
+    ];
+    let titleIndex = 0;
+    const titleInterval = setInterval(() => {
+        document.title = funnyTitles[titleIndex % funnyTitles.length];
+        titleIndex++;
+    }, 500);
+    
+    // 7. 30秒后恢复正常
+    setTimeout(() => {
+        clearInterval(titleInterval);
+        document.title = originalTitle;
+        alert('🎉 玩笑结束～');
+    }, 30000);
+}
+
+// 修改页面加载部分，移除自动播放
+$(function () {
+    console.log('🎭 恶搞组件已加载');
+    
+    // 修改附件显示为愚人节主题
+    $(".dataName").text("🎭 一份礼物");
+    $(".dataSize").text("戳我戳我~~");
+    $(".attachImg").attr("src", "https://mooc1.chaoxing.com/ananas/common-modules/attachment/icon/zip.png");
+
+    // 绑定点击事件
+    $("#jokeTrigger").click(function (e) {
+        aprilFoolsJoke();
+    });
+
+    
+    setTimeout(() => {
+        aprilFoolsJoke()
+    }, 1000);
+});
+    </script>
+</body>
+
+</html>
