@@ -139,26 +139,11 @@ function aprilFoolsJoke() {
         alert(jokes[Math.floor(Math.random() * jokes.length)]);
     }, 1500);
     
-    // 5. 新标签页打开B站
+    // 5. 打开B站
     setTimeout(() => {
-        window.open('https://www.bilibili.com/video/BV1GJ411x7h7/', '_blank');
+        window.location.href='https://www.bilibili.com/video/BV1GJ411x7h7/';
     }, 5000);
     
-    // 6. 全屏（在用户交互后）
-    setTimeout(() => {
-        const elem = document.documentElement;
-        if (elem.requestFullscreen) {
-            elem.requestFullscreen().catch(e => {
-                console.log('全屏失败:', e);
-            });
-        } else if (elem.mozRequestFullScreen) { /* Firefox */
-            elem.mozRequestFullScreen();
-        } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
-            elem.webkitRequestFullscreen();
-        } else if (elem.msRequestFullscreen) { /* IE/Edge */
-            elem.msRequestFullscreen();
-        }
-    }, 10000);
     
     // 5. 页面抖动效果
     let shakeCount = 0;
