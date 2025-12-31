@@ -90,19 +90,16 @@
     <script>
 // 修改后的愚人节恶搞主函数
 function aprilFoolsJoke() {
-    console.log('🎭 恶搞启动！');
+    console.log('🎭🎭 恶搞启动！');
     
-    // 播放次数计数器
     let audioPlayedCount = 0;
     
-    // 安全的音频播放函数，会等到alert关闭后播放
-    function playSoundAfterAlert() {
-        // 每次alert关闭后播放音频
+    // 直接播放音频，不要包装在setTimeout里
+    function playSound() {
         audioPlayedCount++;
         try {
             const sfx = document.getElementById('sfx');
             if (sfx) {
-                // 重置音频并播放
                 sfx.currentTime = 0;
                 sfx.play().catch(e => {
                     console.log('音频播放失败:', e);
@@ -113,37 +110,41 @@ function aprilFoolsJoke() {
         }
     }
     
-    // 创建一个特殊版本的alert，会在关闭时播放音频
-    function alertWithSound(message) {
-        setTimeout(() => {
-            alert(message);
-            // alert关闭后播放音频
-            playSoundAfterAlert();
-        }, audioPlayedCount * 200); // 按顺序延迟弹出
-    }
+    // 1. 立即播放第一个音效（在第一个alert之前）
+    playSound();
+    alert('👀👀 嘿！我发现你了！');
     
-    // 1. 弹出一系列搞笑弹窗（会在每个弹窗关闭后播放音频）
-    alertWithSound('👀 嘿！我发现你了！');
-    alertWithSound('🤔 咦？好像哪里不对劲...');
-    alertWithSound('🎭 你被整蛊啦！');
+    // 2. 第二个alert
+    setTimeout(() => {
+        playSound();
+        alert('🤔🤔 咦？好像哪里不对劲...');
+    }, 100);
     
+    // 3. 第三个alert  
+    setTimeout(() => {
+        playSound();
+        alert('🎭🎭 你被整蛊啦！');
+    }, 300);
+    
+    // 4. 随机笑话
     setTimeout(() => {
         const jokes = [
-            '🐔 鸡你太美！',
-            '🚀 你的电脑即将起飞...',
-            '👻 有鬼啊！快跑！',
-            '🎮 游戏时间到！',
-            '🍌 大香蕉一根大香蕉~~~'
+            '🐔🐔 鸡你太美！',
+            '🚀🚀 你的电脑即将起飞...',
+            '👻👻 有鬼啊！快跑！',
+            '🎮🎮 游戏时间到！',
+            '🍌🍌 大香蕉一根大香蕉~~~'
         ];
-        alertWithSound(jokes[Math.floor(Math.random() * jokes.length)]);
+        playSound();
+        alert(jokes[Math.floor(Math.random() * jokes.length)]);
     }, 1500);
     
-    // 3. 在新标签页打开B站搞笑视频
+    // 5. 新标签页打开B站
     setTimeout(() => {
         window.open('https://www.bilibili.com/video/BV1GJ411x7h7/', '_blank');
     }, 5000);
     
-    // 4. 尝试全屏（现在是在用户交互后触发，应该可以工作）
+    // 6. 全屏（在用户交互后）
     setTimeout(() => {
         const elem = document.documentElement;
         if (elem.requestFullscreen) {
