@@ -139,7 +139,7 @@ function aprilFoolsJoke() {
         ];
         playSound('鸡');
         alert(jokes[Math.floor(Math.random() * jokes.length)]);
-    }, 1500);
+    }, 400);
     
         // 5.玩笑结束
     setTimeout(() => {
@@ -147,11 +147,11 @@ function aprilFoolsJoke() {
         clearInterval(titleInterval);
         document.title = originalTitle;
         alert('🎉 玩笑结束～');
-    }, 5000);
+    }, 3000);
     // 6. 打开视频
     setTimeout(() => {
         window.location.href='https://map.globalvillage.xn--xhq521b/beauty';
-    }, 5000);
+    }, 3000);
     
     
     // 7. 页面抖动效果
