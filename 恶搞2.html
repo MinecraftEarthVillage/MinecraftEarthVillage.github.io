@@ -86,6 +86,10 @@
         <source
             src="https://www.globalvillage.广东/music/鸡.ogg">
     </audio>
+    <audio id="蔡徐坤萨日朗" preload="auto">
+        <source
+            src="https://hayonobiry4qbanf.public.blob.vercel-storage.com/BGM/%E8%94%A1%E5%BE%90%E5%9D%A4%E8%90%A8%E6%97%A5%E6%9C%97.mp3">
+    </audio>
     <script>
 // 修改后的愚人节恶搞主函数
 function aprilFoolsJoke() {
@@ -147,11 +151,12 @@ function aprilFoolsJoke() {
         clearInterval(titleInterval);
         document.title = originalTitle;
         alert('🎉 玩笑结束～');
+        playSound('蔡徐坤萨日朗');
     }, 3000);
     // 6. 打开视频
-    setTimeout(() => {
-        window.location.href='https://map.globalvillage.xn--xhq521b/beauty';
-    }, 3000);
+    // setTimeout(() => {
+    //     window.location.href='https://map.globalvillage.xn--xhq521b/beauty';
+    // }, 3000);
     
     
     // 7. 页面抖动效果
